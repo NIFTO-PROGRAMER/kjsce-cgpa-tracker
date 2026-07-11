@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KJSCE 9+ CGPA Tracker & Strategy Hub</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen">
+
+    <!-- Header Navigation -->
+    <header class="border-b border-slate-800 bg-slate-950 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="bg-red-600 text-white p-2 rounded-lg font-bold tracking-wider text-sm">SVU</div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-tight">KJSCE Strategy Hub</h1>
+                    <p class="text-xs text-slate-400">Electronics & Computer Engineering[cite: 1]</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-6 text-sm">
+                <div class="text-center">
+                    <span class="block text-xs text-slate-400 uppercase tracking-wider font-semibold">Target</span>
+                    <span class="text-red-500 font-bold text-base">9.0+ CGPA</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Left & Middle: Trackers & Input -->
+        <div class="lg:col-span-2 space-y-8">
+            
+            <!-- Dashboard Cards -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+                    <span class="text-sm font-medium text-slate-400">Cumulative CGPA</span>
+                    <div class="flex items-baseline space-x-2 mt-2">
+                        <span id="cgpa-display" class="text-4xl font-extrabold text-white">0.00</span>
+                        <span class="text-sm text-slate-500">/ 10.00</span>
+                    </div>
+                    <div class="mt-2 text-xs" id="cgpa-status">
+                        <span class="text-amber-500 font-medium">No semesters recorded yet.</span>
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+                    <span class="text-sm font-medium text-slate-400">Total Credits Earned</span>
+                    <div class="flex items-baseline space-x-2 mt-2">
+                        <span id="credits-display" class="text-4xl font-extrabold text-emerald-400">0</span>
+                        <span class="text-sm text-slate-500">Credits</span>
+                    </div>
+                    <div class="mt-2 text-xs text-slate-400">
+                        Tracks your progress across phases[cite: 1]
+                    </div>
+                </div>
+
+                <div class="bg-slate-950 border border-slate-800 rounded-xl p-5 flex flex-col justify-between">
+                    <span class="text-sm font-medium text-slate-400">Internal Safety Cushion</span>
+                    <div class="flex items-baseline space-x-2 mt-2">
+                        <span class="text-4xl font-extrabold text-blue-400">90%</span>
+                        <span class="text-sm text-slate-500">Target</span>
+                    </div>
+                    <div class="mt-2 text-xs text-slate-400">
+                        Maximize IA to protect ESE drops[cite: 1]
+                    </div>
+                </div>
+            </div>
+
+            <!-- Semester Manager -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-6">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-slate-800 pb-4 mb-6 gap-4">
+                    <div>
+                        <h2 class="text-xl font-bold text-white">Academic Semester Tracker</h2>
+                        <p class="text-sm text-slate-400">Configure your current semester subjects and calculate SGPA[cite: 1].</p>
+                    </div>
+                    <div class="flex items-center space-x-3 w-full sm:w-auto">
+                        <select id="sem-selector" class="bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 flex-1 sm:flex-none">
+                            <option value="1">Semester 1 (Foundation)</option>
+                            <option value="2">Semester 2 (Foundation)</option>
+                            <option value="3">Semester 3 (Core Grind)</option>
+                            <option value="4">Semester 4 (Core Grind)</option>
+                            <option value="5">Semester 5 (Specialization)</option>
+                            <option value="6">Semester 6 (Specialization)</option>
+                            <option value="7">Semester 7 (Specialization)</option>
+                        </select>
+                        <button id="load-sem-btn" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                            Load Preset
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Subject Form Input -->
+                <div class="mb-6 grid grid-cols-1 md:grid-cols-4 gap-3 items-end bg-slate-900/50 p-4 rounded-xl border border-slate-800/80">
+                    <div class="md:col-span-2">
+                        <label class="block text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">Subject Name</label>
+                        <input id="input-subject-name" type="text" placeholder="e.g., Applied Mathematics I" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs uppercase tracking-wider text-slate-400 font-bold mb-1">Credits</label>
+                        <input id="input-subject-credits" type="number" min="1" max="6" value="4" class="w-full bg-slate-950 border border-slate-700 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500">
+                    </div>
+                    <button id="add-subject-btn" class="w-full bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-lg text-sm font-semibold border border-slate-700 transition">
+                        Add Custom Row
+                    </button>
+                </div>
+
+                <!-- Active Subjects Table -->
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-slate-800 text-slate-400 text-xs uppercase font-bold tracking-wider">
+                                <th class="py-3 px-4">Subject Domain / Component</th>
+                                <th class="py-3 px-4 w-24 text-center">Credits</th>
+                                <th class="py-3 px-4 w-40 text-center">Grade Achieved</th>
+                                <th class="py-3 px-4 w-20 text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="subject-rows-container">
+                            <!-- Rows injected dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Semester Total / Summary Button -->
+                <div class="mt-6 pt-4 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="text-sm text-slate-400">
+                        Current Semester SGPA: <span id="current-sgpa" class="text-white font-bold text-lg">0.00</span>
+                    </div>
+                    <button id="save-semester-btn" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white px-6 py-2.5 rounded-lg text-sm font-bold transition shadow-lg shadow-emerald-900/20">
+                        Commit Semester to CGPA Ledger
+                    </button>
+                </div>
+            </div>
+
+            <!-- Semester Ledger / History -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-6">
+                <h3 class="text-lg font-bold text-white mb-4">Saved Semesters History</h3>
+                <div id="semester-ledger" class="space-y-3">
+                    <p class="text-slate-500 text-sm italic">No committed data available yet. Build your history to keep a precise cumulative record[cite: 1].</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Right Side: Strategy Hub & Insights -->
+        <div class="space-y-8">
+            
+            <!-- Real-time Strategy Hub Card -->
+            <div class="bg-slate-950 border border-slate-800 rounded-xl p-6 sticky top-24">
+                <div class="flex items-center space-x-2 text-red-500 mb-2">
+                    <span class="flex h-2 w-2 relative">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    <span class="text-xs uppercase tracking-widest font-extrabold">Live Strategy Engine</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-4">Contextual Roadmaps</h3>
+
+                <!-- Active Semester Focus Alert -->
+                <div class="bg-slate-900/60 border border-slate-800 rounded-lg p-4 mb-6">
+                    <span class="text-xs text-slate-400 uppercase tracking-wider block font-bold mb-1">Current Academic Phase</span>
+                    <p id="strategy-phase-title" class="text-sm font-semibold text-white">Foundation (Sem I & II)[cite: 1]</p>
+                    <p id="strategy-phase-desc" class="text-xs text-slate-400 mt-1">Focus on high-credit baseline engineering courses and crisp lab journals[cite: 1].</p>
+                </div>
+
+                <!-- Dynamic Strategy Recommendations -->
+                <div class="space-y-4 max-h-[400px] overflow-y-auto pr-2 custom-scrollbar" id="strategy-tips-container">
+                    <!-- Targeted strategy tips mapped to subjects populating dynamically -->
+                </div>
+
+                <!-- Immutable Rules Grid -->
+                <div class="mt-6 pt-6 border-t border-slate-800 space-y-3">
+                    <h4 class="text-xs uppercase tracking-wider font-bold text-slate-400">The Somaiya Evaluation Reality Check</h4>
+                    
+                    <div class="flex items-start space-x-3 text-xs">
+                        <div class="mt-0.5 text-amber-500">🏆</div>
+                        <div>
+                            <strong class="text-slate-200 block">The Golden Ratio Rule</strong>
+                            It is infinitely easier to lock down an **18/20 in Internals (ISE)** than to pull your weight from **40/60 up to 58/60 on the final ESE**[cite: 1]. Don't leave points on the floor!
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3 text-xs">
+                        <div class="mt-0.5 text-emerald-500">📐</div>
+                        <div>
+                            <strong class="text-slate-200 block">The "Somaiya Style" Presentation</strong>
+                            Always deploy clean, scaled pencil circuits/block diagrams[cite: 1]. Ditch huge paragraphs for bullet points with bold headers matching your professor's vocabulary exactly[cite: 1].
+                        </div>
+                    </div>
+
+                    <div class="flex items-start space-x-3 text-xs">
+                        <div class="mt-0.5 text-blue-500">📅</div>
+                        <div>
+                            <strong class="text-slate-200 block">Autonomy Edge</strong>
+                            KJSCE has localized question banks[cite: 1]. Solve the last 3-5 years of specific KJSCE papers religiously inside Weeks 13-15[cite: 1].
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Preset Database for KJSCE Syllabus -->
+    <script>
+        const semesterPresets = {
+            1: {
+                phase: "Foundation (Sem I & II)",
+                desc: "These baseline components set your anchor CGPA. Maximize high-credit math layers and flawless laboratory credits[cite: 1].",
+                subjects: [
+                    { name: "Applied Mathematics I", credits: 4, domain: "Mathematics", tips: "Practice every problem out of Kumbhojkar/Grewal. High-credit booster or killer[cite: 1]." },
+                    { name: "Structured Programming Approach (SPM)", credits: 3, domain: "Computer/AI", tips: "Write/compile everything natively. Code dry-runs on paper ensure absolute clarity for ESE[cite: 1]." },
+                    { name: "Maker Space / Engineering Labs", credits: 2, domain: "Honors", tips: "High-credit, low-effort score boosters. Keep journals immaculate, submitted right on schedule[cite: 1]." }
+                ]
+            },
+            2: {
+                phase: "Foundation (Sem I & II)",
+                desc: "Completing your fundamental requirements. Double down on mathematical accuracy and technical communication[cite: 1].",
+                subjects: [
+                    { name: "Applied Mathematics II", credits: 4, domain: "Mathematics", tips: "Solve every single solved example from the textbook. Routine mastery pays massive dividends[cite: 1]." },
+                    { name: "Object Oriented Programming (OOPM)", credits: 3, domain: "Computer/AI", tips: "Perfect marks on labs are standard for 9+ targets. Master concepts like inheritance and polymorphism[cite: 1]." },
+                    { name: "Basic Electrical & Electronics", credits: 4, domain: "Electronics", tips: "Focus cleanly on step-by-step derivations and exact final scientific units[cite: 1]." }
+                ]
+            },
+            3: {
+                phase: "The Core Grind (Sem III & IV)",
+                desc: "The toughest theoretical hurdles. Switch to visual platforms and heavily prioritize robust numerical practice[cite: 1].",
+                subjects: [
+                    { name: "Analog & Digital Circuits", credits: 4, domain: "Electronics", tips: "Highly conceptual framework. Use YouTube resources (NPTEL, Gate Academy) to untangle structural dynamics[cite: 1]." },
+                    { name: "Data Structures", credits: 4, domain: "Computer/AI", tips: "Crucial for your long-term career portfolio. Focus on complex time complexities and rigorous logical flows[cite: 1]." },
+                    { name: "Network Theory & Synthesis", credits: 3, domain: "Electronics", tips: "Numericals rule here. Draw every circuit state precisely using pencil and scale for maximal formatting layout[cite: 1]." }
+                ]
+            },
+            4: {
+                phase: "The Core Grind (Sem III & IV)",
+                desc: "Solidifying core competencies. Treat this as the dividing line between an average student and an elite tier candidate[cite: 1].",
+                subjects: [
+                    { name: "Analysis of Algorithms", credits: 4, domain: "Computer/AI", tips: "Practice writing out exact dry-runs of complex algorithm execution blocks on paper under exam conditions[cite: 1]." },
+                    { name: "Microprocessors & Interfacing", credits: 4, domain: "Electronics", tips: "Understand structural hardware architectures. Dedicate 30 min before viva to grasp the practical execution context[cite: 1]." },
+                    { name: "Applied Mathematics IV", credits: 4, domain: "Mathematics", tips: "Maintain daily consistency. Two hours of structured daily focus beats 15-hour end-of-week cramming[cite: 1]." }
+                ]
+            },
+            5: {
+                phase: "Specialization & Honors (Sem V - VII)",
+                desc: "Advanced deep-dives. Heavily optimize project-oriented architectures and secure easy elective boosters[cite: 1].",
+                subjects: [
+                    { name: "Honors Core (AI / Computer Vision)", credits: 4, domain: "Honors", tips: "Target an O (Outstanding) grade. Ensure your practical application projects are visually striking for reviews[cite: 1]." },
+                    { name: "Departmental Elective I", credits: 3, domain: "Computer/AI", tips: "Consult upperclassmen regarding historical evaluation trends. Secure high scoring metrics early on[cite: 1]." },
+                    { name: "Core Electronics Specialization", credits: 4, domain: "Electronics", tips: "Integrate theoretical research layouts with practical models to emphasize thorough subject expertise[cite: 1]." }
+                ]
+            },
+            6: {
+                phase: "Specialization & Honors (Sem V - VII)",
+                desc: "Peak research integration phase. Balance your upcoming industrial applications alongside theoretical excellence[cite: 1].",
+                subjects: [
+                    { name: "Honors Core (Robotics / ML)", credits: 4, domain: "Honors", tips: "Deploy minimal working models to GitHub. Real-world structural execution reflects flawlessly into grading metrics[cite: 1]." },
+                    { name: "Professional Elective II", credits: 3, domain: "Computer/AI", tips: "Prioritize clear algorithmic logic flows. Master practical tools alongside theoretical concepts[cite: 1]." }
+                ]
+            },
+            7: {
+                phase: "Specialization & Honors (Sem V - VII)",
+                desc: "Finalizing execution pipelines. Secure your safety cushions early to buffer capstone project reviews[cite: 1].",
+                subjects: [
+                    { name: "Major Project Phase I", credits: 4, domain: "Honors", tips: "Visual validation wins presentation points. Keep documentation clean, concise, and heavily illustrated[cite: 1]." },
+                    { name: "Open Elective III", credits: 3, domain: "Mathematics", tips: "Verify scoring trends through strategic senior outreach to secure optimized grade distributions[cite: 1]." }
+                ]
+            }
+        };
+
+        const gradePointsMap = {
+            "O": 10,
+            "A": 9,
+            "B": 8,
+            "C": 7,
+            "D": 6,
+            "E": 5,
+            "P": 4,
+            "F": 0
+        };
+
+        // State Tracking variables
+        let currentSemesterSubjects = [];
+        let committedSemesters = {};
+
+        // DOM elements
+        const semSelector = document.getElementById("sem-selector");
+        const loadSemBtn = document.getElementById("load-sem-btn");
+        const subjectRowsContainer = document.getElementById("subject-rows-container");
+        const currentSgpaDisplay = document.getElementById("current-sgpa");
+        const saveSemesterBtn = document.getElementById("save-semester-btn");
+        const semesterLedger = document.getElementById("semester-ledger");
+        const cgpaDisplay = document.getElementById("cgpa-display");
+        const creditsDisplay = document.getElementById("credits-display");
+        const cgpaStatus = document.getElementById("cgpa-status");
+        
+        const strategyPhaseTitle = document.getElementById("strategy-phase-title");
+        const strategyPhaseDesc = document.getElementById("strategy-phase-desc");
+        const strategyTipsContainer = document.getElementById("strategy-tips-container");
+
+        const inputSubjectName = document.getElementById("input-subject-name");
+        const inputSubjectCredits = document.getElementById("input-subject-credits");
+        const addSubjectBtn = document.getElementById("add-subject-btn");
+
+        // Initialization
+        window.addEventListener("DOMContentLoaded", () => {
+            loadSemesterPreset(1);
+        });
+
+        loadSemBtn.addEventListener("click", () => {
+            const selectedSem = parseInt(semSelector.value);
+            loadSemesterPreset(selectedSem);
+        });
+
+        addSubjectBtn.addEventListener("click", () => {
+            const name = inputSubjectName.value.trim();
+            const credits = parseInt(inputSubjectCredits.value);
+            if (!name || isNaN(credits) || credits < 1) {
+                alert("Please input a valid subject name and credit amount.");
+                return;
+            }
+            
+            currentSemesterSubjects.push({
+                name: name,
+                credits: credits,
+                domain: "General",
+                tips: "Maintain standard class performance, prioritize clear paper delivery configurations[cite: 1]."
+            });
+
+            inputSubjectName.value = "";
+            renderActiveSubjects();
+            calculateCurrentSgpa();
+        });
+
+        function loadSemesterPreset(semIndex) {
+            const preset = semesterPresets[semIndex];
+            strategyPhaseTitle.textContent = `${preset.phase}[cite: 1]`;
+            strategyPhaseDesc.textContent = preset.desc;
+
+            // Deep copy elements
+            currentSemesterSubjects = JSON.parse(JSON.stringify(preset.subjects));
+            renderActiveSubjects();
+            calculateCurrentSgpa();
+        }
+
+        function renderActiveSubjects() {
+            subjectRowsContainer.innerHTML = "";
+            strategyTipsContainer.innerHTML = "";
+
+            currentSemesterSubjects.forEach((subject, index) => {
+                // Generate Row
+                const row = document.createElement("tr");
+                row.className = "border-b border-slate-800 hover:bg-slate-900/30 transition text-sm";
+                row.innerHTML = `
+                    <td class="py-4 px-4 font-medium text-white">
+                        <div>${subject.name}</div>
+                        <span class="inline-block bg-slate-800 text-slate-400 text-[10px] px-2 py-0.5 rounded mt-1 font-mono">${subject.domain}</span>
+                    </td>
+                    <td class="py-4 px-4 text-center font-semibold text-slate-300">${subject.credits}</td>
+                    <td class="py-4 px-4 text-center">
+                        <select onchange="updateSubjectGrade(${index}, this.value)" class="bg-slate-900 border border-slate-700 rounded-md px-2 py-1 text-sm text-white focus:outline-none focus:border-red-500 w-full max-w-[120px] mx-auto block">
+                            <option value="O">O (10)</option>
+                            <option value="A">A (9)</option>
+                            <option value="B">B (8)</option>
+                            <option value="C">C (7)</option>
+                            <option value="D">D (6)</option>
+                            <option value="E">E (5)</option>
+                            <option value="P">P (4)</option>
+                            <option value="F">F (0)</option>
+                        </select>
+                    </td>
+                    <td class="py-4 px-4 text-center">
+                        <button onclick="removeSubjectRow(${index})" class="text-slate-500 hover:text-red-400 font-bold transition">×</button>
+                    </td>
+                `;
+                subjectRowsContainer.appendChild(row);
+
+                // Set initial default grade internally if not configured
+                if (!subject.grade) subject.grade = "O";
+
+                // Generate Strategy Tip block dynamically
+                const domainColorMap = {
+                    "Mathematics": "border-amber-500 text-amber-400 bg-amber-950/20",
+                    "Computer/AI": "border-emerald-500 text-emerald-400 bg-emerald-950/20",
+                    "Electronics": "border-blue-500 text-blue-400 bg-blue-950/20",
+                    "Honors": "border-purple-500 text-purple-400 bg-purple-950/20",
+                    "General": "border-slate-500 text-slate-400 bg-slate-950/20"
+                };
+
+                const colorClass = domainColorMap[subject.domain] || domainColorMap["General"];
+
+                const tipCard = document.createElement("div");
+                tipCard.className = `p-3.5 border-l-4 rounded-r-lg ${colorClass}`;
+                tipCard.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <h5 class="text-xs font-bold uppercase tracking-wide text-white">${subject.name}</h5>
+                        <span class="text-[10px] font-mono opacity-80 uppercase">${subject.domain}</span>
+                    </div>
+                    <p class="text-xs text-slate-300 leading-relaxed">${subject.tips}</p>
+                `;
+                strategyTipsContainer.appendChild(tipCard);
+            });
+        }
+
+        function updateSubjectGrade(index, val) {
+            currentSemesterSubjects[index].grade = val;
+            calculateCurrentSgpa();
+        }
+
+        function removeSubjectRow(index) {
+            currentSemesterSubjects.splice(index, 1);
+            renderActiveSubjects();
+            calculateCurrentSgpa();
+        }
+
+        function calculateCurrentSgpa() {
+            let totalPoints = 0;
+            let totalCredits = 0;
+
+            currentSemesterSubjects.forEach(s => {
+                const gradeVal = gradePointsMap[s.grade || "O"];
+                totalPoints += (gradeVal * s.credits);
+                totalCredits += s.credits;
+            });
+
+            const sgpa = totalCredits > 0 ? (totalPoints / totalCredits) : 0;
+            currentSgpaDisplay.textContent = sgpa.toFixed(2);
+            return { sgpa, totalCredits };
+        }
+
+        saveSemesterBtn.addEventListener("click", () => {
+            if (currentSemesterSubjects.length === 0) {
+                alert("Cannot commit an empty semester schema.");
+                return;
+            }
+
+            const currentSemNum = parseInt(semSelector.value);
+            const { sgpa, totalCredits } = calculateCurrentSgpa();
+
+            // Commit to ledger object
+            committedSemesters[currentSemNum] = {
+                sgpa: sgpa,
+                credits: totalCredits,
+                subjectsCount: currentSemesterSubjects.length
+            };
+
+            renderLedger();
+            calculateGlobalCgpa();
+        });
+
+        function renderLedger() {
+            if (Object.keys(committedSemesters).length === 0) {
+                semesterLedger.innerHTML = `<p class="text-slate-500 text-sm italic">No committed data available yet.</p>`;
+                return;
+            }
+
+            semesterLedger.innerHTML = "";
+            Object.keys(committedSemesters).sort().forEach(sem => {
+                const record = committedSemesters[sem];
+                const item = document.createElement("div");
+                item.className = "flex justify-between items-center bg-slate-900 border border-slate-800 p-3 rounded-lg text-sm";
+                item.innerHTML = `
+                    <div>
+                        <span class="font-bold text-white">Semester ${sem}</span>
+                        <span class="text-slate-400 text-xs block">${record.subjectsCount} subjects tracked &bull; ${record.credits} credits[cite: 1]</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <div class="text-right">
+                            <span class="text-xs text-slate-400 block font-semibold">SGPA</span>
+                            <span class="text-emerald-400 font-mono font-bold">${record.sgpa.toFixed(2)}</span>
+                        </div>
+                        <button onclick="deleteLedgerRecord(${sem})" class="text-slate-500 hover:text-red-400 font-bold px-1 transition">×</button>
+                    </div>
+                `;
+                semesterLedger.appendChild(item);
+            });
+        }
+
+        function deleteLedgerRecord(semKey) {
+            delete committedSemesters[semKey];
+            renderLedger();
+            calculateGlobalCgpa();
+        }
+
+        function calculateGlobalCgpa() {
+            let totalEarnedPoints = 0;
+            let totalCreditsAccrued = 0;
+
+            Object.keys(committedSemesters).forEach(key => {
+                const record = committedSemesters[key];
+                totalEarnedPoints += (record.sgpa * record.credits);
+                totalCreditsAccrued += record.credits;
+            });
+
+            const finalCgpa = totalCreditsAccrued > 0 ? (totalEarnedPoints / totalCreditsAccrued) : 0;
+            
+            cgpaDisplay.textContent = finalCgpa.toFixed(2);
+            creditsDisplay.textContent = totalCreditsAccrued;
+
+            // Status Update Engine
+            if (totalCreditsAccrued === 0) {
+                cgpaStatus.innerHTML = `<span class="text-amber-500 font-medium">No semesters recorded yet.</span>`;
+            } else if (finalCgpa >= 9.0) {
+                cgpaStatus.innerHTML = `<span class="text-emerald-400 font-medium">🏆 On Target for 9+ Honors Track! Maintain consistency[cite: 1].</span>`;
+            } else if (finalCgpa >= 8.0) {
+                cgpaStatus.innerHTML = `<span class="text-blue-400 font-medium">👍 Solid performance. Optimize internal assessments to push further[cite: 1].</span>`;
+            } else {
+                cgpaStatus.innerHTML = `<span class="text-red-400 font-medium">⚠️ Below target. Maximize labs/vivas and map PYPs immediately[cite: 1].</span>`;
+            }
+        }
+    </script>
+</body>
+</html>
